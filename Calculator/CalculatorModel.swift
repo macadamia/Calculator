@@ -14,9 +14,11 @@ class CalculatorModel {
     //funcs are the methods of the class
     
     private var accumulator = 0.0
+    private var internalProgram = [AnyObject]()
     
     func setOperand(operand: Double) {
         accumulator = operand
+        internalProgram.append(operand as AnyObject)
     }
     
     // could implement a switch case, but a generic function would be better
@@ -43,6 +45,7 @@ class CalculatorModel {
     }
     
     func performOperation(symbol: String) {
+        internalProgram.append(symbol as AnyObject)
         if let operation = operations[symbol] {
             switch operation { // don't need a default for this switch because all the possiblecases in the enum are accounted for
             case .Constant(let value):
@@ -54,7 +57,6 @@ class CalculatorModel {
                 pending = PendingBinaryOperationInfo(binaryFunction: function, firstOperand: accumulator)
             case .Equals:
                 executePendingBinaryOperation()
-                
             }
         }
     }
@@ -75,6 +77,31 @@ class CalculatorModel {
     private struct PendingBinaryOperationInfo {
         var binaryFunction: (Double, Double) -> Double  // automagically initialised in structs
         var firstOperand: Double
+    }
+    
+    typealias PropertyList = AnyObject
+    
+    var program: PropertyList {
+        get {
+            return internalProgram as CalculatorModel.PropertyList
+        }
+        set {
+            clear()
+            if let arrayOfOps = newValue as? [AnyObject]{
+                for op in arrayOfOps {
+                    if op is Double {  // seems to be a different syntax from the lecture, Swift 3?
+                        setOperand(operand: op as! Double)
+                    } else if op is String {
+                        performOperation(symbol: op as! String)
+                    }
+                }
+            }
+        }
+    }
+    func clear() {
+        accumulator = 0.0
+        pending = nil
+        internalProgram.removeAll()
     }
     
     var result: Double { // computed property, cannot be set, only get in this case

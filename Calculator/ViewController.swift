@@ -62,7 +62,23 @@ class ViewController: UIViewController {
         userIsInTheMiddleOfTyping = true
     }
 
+    var savedProgram: CalculatorModel.PropertyList?
+    
+    @IBAction func save() {
+        savedProgram = calculator.program
+    }
+    
+    @IBAction func restore() {
+        if savedProgram != nil {
+            calculator.program = savedProgram!
+            displayValue = calculator.result
+        }
+    }
+    
+    
     private var calculator = CalculatorModel() // this allows us to talk to the model, easily
+
+
     
     @IBAction private func performOperation(_ sender: UIButton) {
         if userIsInTheMiddleOfTyping {
