@@ -26,8 +26,8 @@ class ViewController: UIViewController {
         }
         set {
             display.text = String(newValue)
-            tickerTapeDisplay = tickerTapeDisplay + String(newValue)
-            displayTape.text = tickerTapeDisplay
+            //tickerTapeDisplay = tickerTapeDisplay + String(newValue)
+            //displayTape.text = tickerTapeDisplay
         }
     }
     
@@ -64,6 +64,13 @@ class ViewController: UIViewController {
 
     var savedProgram: CalculatorModel.PropertyList?
     
+    @IBAction func Clear(_ sender: UIButton) {
+        display.text = "0"
+        tickerTapeDisplay = ""
+        userIsInTheMiddleOfTyping = false
+        displayTape.text = " "
+        calculator.clear() // clear the stuff in the model
+    }
     @IBAction func save() {
         savedProgram = calculator.program
     }
@@ -77,14 +84,14 @@ class ViewController: UIViewController {
     
     
     private var calculator = CalculatorModel() // this allows us to talk to the model, easily
-
-
+    
     
     @IBAction private func performOperation(_ sender: UIButton) {
         if userIsInTheMiddleOfTyping {
             calculator.setOperand(operand: displayValue)
-            tickerTapeDisplay = tickerTapeDisplay + String(displayValue)
+            //tickerTapeDisplay = tickerTapeDisplay + String(displayValue)
             userIsInTheMiddleOfTyping = false
+            
         }
         if let mathematicalSymbol = sender.currentTitle {
             tickerTapeDisplay = tickerTapeDisplay + " " + mathematicalSymbol
@@ -92,7 +99,11 @@ class ViewController: UIViewController {
             calculator.performOperation(symbol: mathematicalSymbol)
             
         }
+        periodEntered = false
         displayValue = calculator.result
+        tickerTapeDisplay = tickerTapeDisplay + String(displayValue)
+        displayTape.text = tickerTapeDisplay
+        
     }
     
 }
